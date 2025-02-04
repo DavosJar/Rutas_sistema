@@ -1,0 +1,75 @@
+{% extends "table_base.html" %}
+
+{% block title %}Puntos de Entrega{% endblock title %}
+
+{% block table %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{% block table_title %}Puntos de Entrega Registrados{% endblock table_title %}</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <div class="dataTables_length" id="dataTable_length">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <div id="dataTable_filter" class="dataTables_filter">
+                        <label>Buscar:
+                            <input type="search" class="form-control form-control-sm" placeholder=""
+                                aria-controls="dataTable">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <a href="{{ url_for('punto_entrega.punto_entrega_save') }}" class="btn btn-info btn-sm">
+                    <i class="fas fa-edit"></i> Registrar Punto de Entrega
+                </a>
+            </div>
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Calle Principal</th>
+                        <th>Calle Secundaria</th>
+                        <th>Referencia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if puntos_entrega %}
+                    {% for punto in puntos_entrega %}
+                    <tr>
+                        <td><a href="{{ url_for('punto_entrega.punto_entrega_detail', id=punto.id) }}">
+                            {{ punto.num }}</a></td>
+                        <td>{{ punto.callePrincipal }}</td>
+                        <td>{{ punto.calleSecundaria }}</td>
+                        <td>{{ punto.referencia }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">No hay puntos de entrega registrados</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('punto_entrega.home', page=page-1) }}"
+                    class="btn btn-primary {% if page == 1 %}disabled{% endif %}">
+                    Anterior
+                </a>
+
+                <span>Página {{ page }}</span>
+
+                <a href="{{ url_for('punto_entrega.home', page=page+1) }}"
+                    class="btn btn-primary {% if page == total_pages %}disabled{% endif %}">
+                    Siguiente
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock table %}
