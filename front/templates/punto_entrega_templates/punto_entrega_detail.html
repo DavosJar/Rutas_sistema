@@ -1,0 +1,32 @@
+{% extends "blank_base.html" %}
+
+{% block title %}Detalle del Punto de Entrega{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Detalle del Punto de Entrega</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Número:</strong> {{ punto_entrega.num }}</p>
+                    <p><strong>Calle Principal:</strong> {{ punto_entrega.callePrincipal }}</p>
+                    <p><strong>Calle Secundaria:</strong> {{ punto_entrega.calleSecundaria }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Referencia:</strong> {{ punto_entrega.referencia }}</p>
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('punto_entrega.edit', id=punto_entrega.id) }}"
+                            class="btn btn-primary">Editar</a>
+                        <a href="{{ url_for('punto_entrega.delete', id=punto_entrega.id) }}" class="btn btn-primary">
+                            <i class="fas fa-trash"></i> Eliminar</a>
+                            <a href="{{ url_for('punto_entrega.home') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

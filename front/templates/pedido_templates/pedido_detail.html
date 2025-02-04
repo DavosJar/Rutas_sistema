@@ -1,0 +1,31 @@
+{% extends "blank_base.html" %}
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{{ pedido.contenido }}</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Contenido:</strong> {{ pedido.contenido }}</p>
+                <p><strong>Cliente:</strong> {{ pedido.cliente.razonSocial }}</p>
+                <p><strong>Punto Entrega:</strong> {{ pedido.puntoEntrega.num }}</p>
+                <p><strong>Refrigeracion</strong> {{ pedido.requiereFrio }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Volumen</strong> {{ pedido.volumen }}</p>
+                <p><strong>Peso Total</strong> {{ pedido.pesoTotal }}</p>
+                <p><strong>Fecha Registro:</strong> {{ pedido.fechaRegistro }}</p>
+                <div class="row gap-1">
+                   
+                    <a href="{{ url_for('pedido.edit', id=pedido.id) }}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <a href="{{ url_for('pedido.delete', id=pedido.id) }}" class="btn btn-danger">Eliminar</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

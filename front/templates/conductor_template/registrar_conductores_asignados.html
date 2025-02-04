@@ -1,0 +1,83 @@
+{% extends "table_base.html" %}
+{% block title %}Guardar Conductor{% endblock title %}
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Registrar Conductor</h6>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('conductor.save_conductor') }}">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="apellido">Apellido</label>
+                <input type="text" class="form-control" id="apellido" name="apellido" required>
+            </div>
+            <div class="form-group">
+                <label for="tipoIdentificacion">Tipo de Identificación</label>
+                <select class="form-control" id="tipoIdentificacion" name="tipoIdentificacion" required>
+                    <option value="DNI">DNI</option>
+                    <option value="Pasaporte">Pasaporte</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="identificacion">Identificación</label>
+                <input type="text" class="form-control" id="identificacion" name="identificacion" required>
+            </div>
+            <div class="form-group">
+                <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento" required>
+            </div>
+            <div class="form-group">
+                <label for="direccion">Dirección</label>
+                <input type="text" class="form-control" id="direccion" name="direccion" required>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="text" class="form-control" id="telefono" name="telefono" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="sexo">Sexo</label>
+                <select class="form-control" id="sexo" name="sexo" required>
+                    <option value="HOMBRE">Hombre</option>
+                    <option value="MUJER">Mujer</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="licenciaConducir">Licencia de Conducir</label>
+                <input type="text" class="form-control" id="licenciaConducir" name="licenciaConducir" required>
+            </div>
+            <div class="form-group">
+                <label for="caducidadLicencia">Caducidad de Licencia</label>
+                <input type="date" class="form-control" id="caducidadLicencia" name="caducidadLicencia" required>
+            </div>
+            <div class="form-group">
+                <label for="salario">Salario</label>
+                <input type="number" class="form-control" id="salario" name="salario" required>
+            </div>
+            <div class="form-group">
+                <label for="turno">Turno</label>
+                <select class="form-control" id="turno" name="turno" required>
+                    <option value="MAÑANA">Mañana</option>
+                    <option value="TARDE">Tarde</option>
+                    <option value="NOCTURNO">Nocturno</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <select class="form-control" id="estado" name="estado" required>
+                    <option value="ACTIVO">Activo</option>
+                    <option value="INACTIVO">Inactivo</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+</div>
+{% endblock content %}

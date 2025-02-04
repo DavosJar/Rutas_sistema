@@ -15,10 +15,11 @@ import javax.ws.rs.core.Response.Status;
 
 import com.app_rutas.controller.dao.services.ConductorVehiculoServices;
 import com.app_rutas.controller.dao.services.ItinerarioServices;
-import com.app_rutas.controller.excepcion.ListEmptyException;
+import com.app_rutas.controller.excepcion.ExcesiveChargeException;
 import com.app_rutas.controller.tda.list.LinkedList;
 import com.app_rutas.models.Itinerario;
 import com.app_rutas.models.OrdenEntrega;
+import com.app_rutas.models.enums.ItinerarioEstadoEnum;
 import com.app_rutas.utils.ResponseBuilder;
 
 @Path("/itinerario")
@@ -27,7 +28,7 @@ public class ItinerarioApi {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/list")
-    public Response getAll() throws ListEmptyException, Exception {
+    public Response getAll() throws ExcesiveChargeException, Exception {
         ItinerarioServices ps = new ItinerarioServices();
         try {
             return new ResponseBuilder("success", Status.OK, ps.listShowAll()).buildListResponse();
@@ -52,25 +53,19 @@ public class ItinerarioApi {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/get/{id}")
     public Response getById(@PathParam("id") Integer id) {
-        HashMap<String, Object> map = new HashMap<>();
         ItinerarioServices ps = new ItinerarioServices();
         try {
             if (id == null || id < 1) {
-                map.put("msg", "ID invalido");
-                return Response.status(Status.BAD_REQUEST).entity(map).build();
+                return new ResponseBuilder("ID no valido", Status.BAD_REQUEST).buildBadResponse();
             }
             ps.setItinerario(ps.get(id));
             if (ps.getItinerario() == null || ps.getItinerario().getId() == null) {
-                map.put("msg", "No existe generador con el ID proporcionado");
-                return Response.status(Status.NOT_FOUND).entity(map).build();
+                return new ResponseBuilder("Itinerario no encontrado", Status.NOT_FOUND).buildBadResponse();
             }
-            map.put("msg", "OK");
-            map.put("data", ps.getItinerario());
-            return Response.ok(map).build();
+            return new ResponseBuilder("success", Status.OK, ps.showOne(id)).bulidResponse();
         } catch (Exception e) {
-            map.put("msg", "Error al obtener el generador");
-            map.put("error", e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(map).build();
+            return new ResponseBuilder("Error interno del servidor: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR)
+                    .buildBadResponse();
         }
     }
 
@@ -90,13 +85,15 @@ public class ItinerarioApi {
                     String fehcaGeneracion = java.time.LocalDate.now().toString();
                     ps.getItinerario().setFechaGeneracion(fehcaGeneracion);
                     ps.getItinerario().setFechaProgramada(map.get("fechaProgramada").toString());
-                    if (map.get("estado") != null) {
-                        ps.getItinerario().setEstado(ps.getEstadoEnum(map.get("estado").toString()));
-                    }
+                    ps.getItinerario().setEstado(ItinerarioEstadoEnum.PENDIENTE);
                     ps.getItinerario().setIdConductorVehiculo(cas.getConductorVehiculo().getId());
+                    Thread.sleep(20);
                     ps.save();
-                    res.put("estado", "Ok");
-                    res.put("data", "Registro guardado con exito.");
+                    res.put("Status", "Ok");
+                    res.put("message", "Itinerario creado con exito.");
+                    res.put("id", ps.getItinerario().getId());
+
+                    cas.getConductorVehiculo().setIsWorking(true);
                     return Response.ok(res).build();
                 } else {
                     res.put("estado", "error");
@@ -108,10 +105,15 @@ public class ItinerarioApi {
                 res.put("data", "El campo 'conductor-asignado' es obligatorio.");
                 return Response.status(Response.Status.BAD_REQUEST).entity(res).build();
             }
+
         } catch (IllegalArgumentException e) {
             res.put("estado", "error");
             res.put("data", e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity(res).build();
+        } catch (InterruptedException e) {
+            res.put("estado", "error");
+            res.put("data", "Error interno del servidor: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(res).build();
         } catch (Exception e) {
             res.put("estado", "error");
             res.put("data", "Error interno del servidor: " + e.getMessage());
@@ -123,20 +125,22 @@ public class ItinerarioApi {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}/delete")
     public Response delete(@PathParam("id") Integer id) {
-        HashMap<String, Object> res = new HashMap<>();
         ItinerarioServices ps = new ItinerarioServices();
         try {
             ps.getItinerario().setId(id);
+            if (ps.getItinerario().getDetallesEntrega() != null && !ps.getItinerario().getDetallesEntrega().isEmpty()) {
+                throw new IllegalAccessException("No se puede eliminar un itinerario con ordenes de entrega");
+            }
             ps.delete();
-            System.out.println("Itinerario eliminada" + id);
-            res.put("estado", "Ok");
-            res.put("data", "Itinerario eliminado con exito.");
-            return Response.ok(res).build();
+
+            return new ResponseBuilder("Itinerario eliminado con exito", Status.OK).buildOkResponse();
+        } catch (IllegalAccessException e) {
+            return new ResponseBuilder("No se puede eliminar un itinerario con ordenes de entrega", Status.BAD_REQUEST)
+                    .buildBadResponse();
+
         } catch (Exception e) {
-            System.out.println("Hasta aqui llega" + ps.getItinerario().getId());
-            res.put("estado", "error");
-            res.put("data", "Error interno del servidor: " + e.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(res).build();
+            return new ResponseBuilder("Error interno del servidor: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR)
+                    .buildBadResponse();
         }
     }
 
@@ -248,6 +252,11 @@ public class ItinerarioApi {
             is.setItinerario(is.getById(id));
 
             LinkedList<OrdenEntrega> ordenesEntrega = is.generarOrdenList(id);
+
+            if (ordenesEntrega.isEmpty()) {
+                return new ResponseBuilder("pedidos compatibles no encontrados", Status.NOT_FOUND).buildBadResponse();
+            }
+
             OrdenEntrega[] ordenes = ordenesEntrega.toArray();
             ArrayList<OrdenEntrega> ordenes1 = new ArrayList<>();
             for (OrdenEntrega ordenEntrega : ordenes) {
@@ -257,16 +266,11 @@ public class ItinerarioApi {
             is.getItinerario().setDetallesEntrega(ordenes1);
             is.update();
 
-            res.put("estado", "Ok");
-            res.put("data", "Itinerario generado con éxito.");
-            res.put("id", is.getItinerario().getId());
-            res.put("ordenes", ordenesEntrega.toArray());
+            return new ResponseBuilder("Itinerario generado con exito", Status.OK).buildOkResponse();
 
-            return Response.ok(res).build();
         } catch (Exception e) {
-            res.put("estado", "error");
-            res.put("data", "Error interno del servidor: " + e.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(res).build();
+            return new ResponseBuilder("Error interno del servidor: " + e.getMessage(), Status.INTERNAL_SERVER_ERROR)
+                    .buildBadResponse();
         }
     }
 
