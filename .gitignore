@@ -1,0 +1,7 @@
+front/virtual/
+front/__pycache__/
+front/routes/__pycache__/
+
+rutas-service/target/
+rutas-service/media/
+rutas-service/logs/
