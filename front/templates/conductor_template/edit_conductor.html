@@ -1,0 +1,83 @@
+{% extends "table_base.html" %}
+{% block title %}Editar Conductor{% endblock title %}
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Editar Conductor</h6>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('conductor.edit_conductor', id=conductor.id) }}">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ conductor.nombre }}" required>
+            </div>
+            <div class="form-group">
+                <label for="apellido">Apellido</label>
+                <input type="text" class="form-control" id="apellido" name="apellido" value="{{ conductor.apellido }}" required>
+            </div>
+            <div class="form-group">
+                <label for="tipoIdentificacion">Tipo de Identificación</label>
+                <select class="form-control" id="tipoIdentificacion" name="tipoIdentificacion" required>
+                    <option value="DNI" {% if conductor.tipoIdentificacion == 'DNI' %}selected{% endif %}>DNI</option>
+                    <option value="Pasaporte" {% if conductor.tipoIdentificacion == 'Pasaporte' %}selected{% endif %}>Pasaporte</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="identificacion">Identificación</label>
+                <input type="text" class="form-control" id="identificacion" name="identificacion" value="{{ conductor.identificacion }}" required>
+            </div>
+            <div class="form-group">
+                <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento" value="{{ conductor.fechaNacimiento }}" required>
+            </div>
+            <div class="form-group">
+                <label for="direccion">Dirección</label>
+                <input type="text" class="form-control" id="direccion" name="direccion" value="{{ conductor.direccion }}" required>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="text" class="form-control" id="telefono" name="telefono" value="{{ conductor.telefono }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ conductor.email }}" required>
+            </div>
+            <div class="form-group">
+                <label for="sexo">Sexo</label>
+                <select class="form-control" id="sexo" name="sexo" required>
+                    <option value="HOMBRE" {% if conductor.sexo == 'HOMBRE' %}selected{% endif %}>Hombre</option>
+                    <option value="MUJER" {% if conductor.sexo == 'MUJER' %}selected{% endif %}>Mujer</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="licenciaConducir">Licencia de Conducir</label>
+                <input type="text" class="form-control" id="licenciaConducir" name="licenciaConducir" value="{{ conductor.licenciaConducir }}" required>
+            </div>
+            <div class="form-group">
+                <label for="caducidadLicencia">Caducidad de Licencia</label>
+                <input type="date" class="form-control" id="caducidadLicencia" name="caducidadLicencia" value="{{ conductor.caducidadLicencia }}" required>
+            </div>
+            <div class="form-group">
+                <label for="salario">Salario</label>
+                <input type="number" class="form-control" id="salario" name="salario" value="{{ conductor.salario }}" required>
+            </div>
+            <div class="form-group">
+                <label for="turno">Turno</label>
+                <select class="form-control" id="turno" name="turno" required>
+                    <option value="MAÑANA" {% if conductor.turno == 'MAÑANA' %}selected{% endif %}>Mañana</option>
+                    <option value="TARDE" {% if conductor.turno == 'TARDE' %}selected{% endif %}>Tarde</option>
+                    <option value="NOCTURNO" {% if conductor.turno == 'NOCTURNO' %}selected{% endif %}>Nocturno</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <select class="form-control" id="estado" name="estado" required>
+                    <option value="ACTIVO" {% if conductor.estado == 'ACTIVO' %}selected{% endif %}>Activo</option>
+                    <option value="INACTIVO" {% if conductor.estado == 'INACTIVO' %}selected{% endif %}>Inactivo</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+    </div>
+</div>
+{% endblock content %}
