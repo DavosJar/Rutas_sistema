@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Error{% endblock title %}
+
+{% block content %}
+
+{{ msg }}
+<div class="container py-5">
+    <div class="card shadow-sm p-4">
+        <h2 class="mb-4">Error</h2>
+        <p class="text-danger">{{ error }}</p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages container mt-3">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+                role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <script>
+            window.setTimeout(function() {
+                $(".alert").fadeTo(500, 0).slideUp(500, function(){
+                    $(this).remove(); 
+                });
+            }, 5000);
+        </script>
+        
+    </div>
+</div>
+{% endblock content %}
