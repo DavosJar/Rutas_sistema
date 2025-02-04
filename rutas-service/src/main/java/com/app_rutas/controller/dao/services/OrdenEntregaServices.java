@@ -229,6 +229,6 @@ public class OrdenEntregaServices {
         }
 
         pedidoServices.setPedido(pedido);
-        pedidoServices.matchUnAttende(pedido.getId());
+        pedidoServices.matchAttende(pedido.getId());
     }
 }
