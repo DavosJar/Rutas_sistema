@@ -1,0 +1,107 @@
+{% extends "blank_base.html" %}
+{% block title %}
+Editar Trabajador
+{% endblock title %}
+{% block content %}
+
+<div class="d-flex justify-content-center">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Editar Trabajador</h6>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('trabajador.update', id=trabajador.id) }}" method="POST">
+                    <input type="hidden" name="id" value="{{ trabajador.id }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nombre">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ trabajador.nombre }}" required>
+                                {% if errors and errors.nombre %}
+                                <div class="text-danger">{{ errors.nombre }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="apellido">Apellido</label>
+                                <input type="text" class="form-control" id="apellido" name="apellido" value="{{ trabajador.apellido }}" required>
+                                {% if errors and errors.apellido %}
+                                <div class="text-danger">{{ errors.apellido }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="tipoIdentificacion">Tipo de Identificación</label>
+                                <select id="tipoIdentificacion" name="tipoIdentificacion" class="form-control">
+                                    {% if tipoIdentificacion %}
+                                        {% for key, value in tipoIdentificacion %}
+                                            <option value="{{ key }}" {% if trabajador.tipoIdentificacion == key %}selected{% endif %}>{{ value }}</option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option value="" disabled>No disponible</option>
+                                    {% endif %}
+                                </select>
+                                {% if errors and errors.tipoIdentificacion %}
+                                <div class="text-danger">{{ errors.tipoIdentificacion }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="identificacion">Identificación</label>
+                                <input type="text" class="form-control" id="identificacion" name="identificacion" value="{{ trabajador.identificacion }}" required>
+                                {% if errors and errors.identificacion %}
+                                <div class="text-danger">{{ errors.identificacion }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                                <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento" value="{{ trabajador.fechaNacimiento }}" required>
+                                {% if errors and errors.fechaNacimiento %}
+                                <div class="text-danger">{{ errors.fechaNacimiento }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="direccion">Dirección</label>
+                                <input type="text" class="form-control" id="direccion" name="direccion" value="{{ trabajador.direccion }}" required>
+                                {% if errors and errors.direccion %}
+                                <div class="text-danger">{{ errors.direccion }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="telefono">Teléfono</label>
+                                <input type="text" class="form-control" id="telefono" name="telefono" value="{{ trabajador.telefono }}" required>
+                                {% if errors and errors.telefono %}
+                                <div class="text-danger">{{ errors.telefono }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ trabajador.email }}" required>
+                                {% if errors and errors.email %}
+                                <div class="text-danger">{{ errors.email }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="sexo">Sexo</label>
+                                <select id="sexo" name="sexo" class="form-control">
+                                    {% if sexo %}
+                                        {% for key, value in sexo %}
+                                            <option value="{{ key }}" {% if trabajador.sexo == key %}selected{% endif %}>{{ value }}</option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option value="" disabled>No disponible</option>
+                                    {% endif %}
+                                </select>
+                                {% if errors and errors.sexo %}
+                                <div class="text-danger">{{ errors.sexo }}</div>
+                                {% endif %}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Actualizar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,31 @@
+{% extends "blank_base.html" %}
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{{ conductor.nombre }} {{ conductor.apellido }}</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Tipo de identificación:</strong> {{ conductor.tipoIdentificacion }}</p>
+                <p><strong>Identificación:</strong> {{ conductor.identificacion }}</p>
+                <p><strong>Fecha de nacimiento:</strong> {{ conductor.fechaNacimiento }}</p>
+                <p><strong>Dirección:</strong> {{ conductor.direccion }}</p>
+                <p><strong>Teléfono:</strong> {{ conductor.telefono }}</p>
+                <p><strong>Email:</strong> {{ conductor.email }}</p>
+                <p><strong>Sexo:</strong> {{ conductor.sexo }}</p>
+                <p><strong>Licencia de conducir:</strong> {{ conductor.licenciaConducir }}</p>
+                <p><strong>Caducidad de licencia:</strong> {{ conductor.caducidadLicencia }}</p>
+                <p><strong>Salario:</strong> {{ conductor.salario }}</p>
+                <p><strong>Turno:</strong> {{ conductor.turno }}</p>
+                <p><strong>Estado:</strong> {{ conductor.estado }}</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- Botones para editar y eliminar -->
+            <a href="{{ url_for('conductor.edit_conductor', id=conductor.id) }}" class="btn btn-primary">Editar</a>
+            <a href="{{ url_for('conductor.delete_conductor', id=conductor.id) }}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este conductor?');">Eliminar</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

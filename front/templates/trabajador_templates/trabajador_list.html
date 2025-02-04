@@ -1,0 +1,82 @@
+{% extends "table_base.html" %}
+{% block title %}Trabajadores{% endblock title %}
+
+{% block table %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{% block table_title %}Trabajadores Registrados{% endblock
+            table_title %}</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <div class="dataTables_length" id="dataTable_length">
+                        
+                    </div>
+                <div class="col-sm-12 col-md-6">
+                    <div id="dataTable_filter" class="dataTables_filter">
+                        <label>Buscar:
+                            <input type="search" class="form-control form-control-sm" placeholder=""
+                                aria-controls="dataTable">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <a href="{{ url_for('trabajador.trabajador_save') }}" class="btn btn-info btn-sm">
+                    <i class="fas fa-edit">Registrar Trabajador</i></a>
+            </div>
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Nombre Completo</th>
+                        <th>Identificación</th>
+                        <th>Fecha de Nacimiento</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Sexo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if trabajadores %}
+                    {% for trabajador in trabajadores %}
+                    <tr>
+                        <td><a href="{{ url_for('trabajador.trabajador_detail', id=trabajador.id) }}">
+                            {{ trabajador.nombre }} {{ trabajador.apellido }}</td>
+                        <td>{{ trabajador.identificacion }}</td>
+                        <td>{{ trabajador.fechaNacimiento }}</td>
+                        <td>{{ trabajador.direccion }}</td>
+                        <td>{{ trabajador.telefono }}</td>
+                        <td>{{ trabajador.email }}</td>
+                        <td>{{ trabajador.sexo }}</td>
+                        <td>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center">No hay trabajadores registrados</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('trabajador.home', page=page-1) }}"
+                    class="btn btn-primary {% if page == 1 %}disabled{% endif %}">
+                    Anterior
+                </a>
+
+                <span>Página {{ page }}</span>
+
+                <a href="{{ url_for('trabajador.home', page=page+1) }}"
+                    class="btn btn-primary {% if page == total_pages %}disabled{% endif %}">
+                    Siguiente
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock table %}
