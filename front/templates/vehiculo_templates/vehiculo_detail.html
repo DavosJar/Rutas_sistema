@@ -1,0 +1,34 @@
+{% extends "blank_base.html" %}
+{% block title %}Detalle del Trabajador{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Detalle del Trabajador</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Modelo:</strong> {{ vehiculo.modelo }}</p>
+                    <p><strong>Placa:</strong> {{ vehiculo.placa }}</p>
+                    <p><strong>Capacidad:</strong> {{ vehiculo.capacidad }}</p>
+                    <p><strong>Potencia:</strong> {{ vehiculo.potencia }}</p>
+                    <p><strong>Peso Tara:</strong> {{ vehiculo.pesoTara }}</p>
+
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Peso Maximo:</strong> {{ vehiculo.pesoMaximo }}</p>
+                    <p><strong>Refrigerado:</strong> {{ vehiculo.refrigerado }}</p>
+                    <p><strong>Estado:</strong> {{ vehiculo.estado }}</p>
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('vehiculo.edit', id=vehiculo.id) }}" class="btn btn-primary">Editar Trabajador</a>
+                        <a href="{{ url_for('vehiculo.delete', id=vehiculo.id) }}" class="btn btn-danger">Eliminar Trabajador</a>
+                        <a href="{{ url_for('vehiculo.home') }}" class="btn btn-secondary">Volver</a>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+</div>
+{% endblock content %}

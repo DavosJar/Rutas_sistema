@@ -1,0 +1,22 @@
+{% extends "blank_base.html"%}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{{ cliente.razonSocial }}</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <P><strong>RUC:</strong> {{ cliente.ruc }}</P>
+                <P><strong>Email:</strong> {{ cliente.telefono }}</P>
+                <P><strong>Acciones:</strong> {{ cliente.email }}</P>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <a href="{{ url_for('cliente.edit', id=cliente.id) }}" class="btn btn-primary">Editar</a>
+            <a href="{{ url_for('cliente.delete', id=cliente.id) }}" class="btn btn-danger">Eliminar</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
