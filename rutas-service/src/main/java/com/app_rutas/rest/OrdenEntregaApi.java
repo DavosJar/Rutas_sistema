@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.app_rutas.controller.dao.services.OrdenEntregaServices;
 import com.app_rutas.controller.dao.services.PedidoServices;
-import com.app_rutas.controller.excepcion.ListEmptyException;
+import com.app_rutas.controller.excepcion.ExcesiveChargeException;
 import com.app_rutas.controller.tda.list.LinkedList;
 import com.app_rutas.models.OrdenEntrega;
 
@@ -24,7 +24,7 @@ public class OrdenEntregaApi {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/list")
-    public Response getAll() throws ListEmptyException, Exception {
+    public Response getAll() throws ExcesiveChargeException, Exception {
         HashMap<String, Object> res = new HashMap<>();
         OrdenEntregaServices ps = new OrdenEntregaServices();
         try {

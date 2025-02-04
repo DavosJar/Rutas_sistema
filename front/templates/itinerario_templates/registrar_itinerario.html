@@ -1,0 +1,44 @@
+{% extends "blank_base.html" %}
+{% block title %}
+Registrar Itinerario
+{% endblock title %}
+{% block content %}
+
+<div class="d-flex justify-content-center">
+    <div class="col-lg-6">
+        <div class="card shadow y">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Datos Itinerario</h6>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('itinerario.save') }}" method="POST">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <select class="form-control" id="conductor_vehiculo" name="idConductorVehiculo" required>
+                                    <option value="">Conductor Vehiculo</option>
+                                    {% if conductor_vehiculo %}
+                                    {% for cv in conductor_vehiculo %}
+                                    <option value="{{ cv.id }}">
+                                        {% if cv.conductor and cv.conductor.nombre %}{{ cv.conductor.nombre }}{% endif %}
+                                        {% if cv.conductor and cv.conductor.apellido %} {{ cv.conductor.apellido }}{% endif %}
+                                        {% if cv.vehiculo and cv.vehiculo.marca %} - {{ cv.vehiculo.marca }}{% endif %}
+                                        {% if cv.vehiculo and cv.vehiculo.modelo %} {{ cv.vehiculo.modelo }}{% endif %}
+                                        {% if cv.vehiculo and cv.vehiculo.placa %} {{ cv.vehiculo.placa }}{% endif %}
+                                    </option>
+                                    {% endfor %}
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="fechaProgramada">Fecha Programada</label>
+                                <input type="date" class="form-control" id="fechaProgramada" name="fechaProgramada" required>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -17,7 +17,7 @@ import com.app_rutas.controller.dao.services.ConductorVehiculoServices;
 import com.app_rutas.controller.dao.services.ConductorServices;
 import com.app_rutas.controller.dao.services.ItinerarioServices;
 import com.app_rutas.controller.dao.services.VehiculoServices;
-import com.app_rutas.controller.excepcion.ListEmptyException;
+import com.app_rutas.controller.excepcion.ExcesiveChargeException;
 import com.app_rutas.controller.tda.list.LinkedList;
 import com.app_rutas.models.ConductorVehiculo;
 import com.app_rutas.models.enums.VehiculoEstadoEnum;
@@ -29,13 +29,13 @@ public class ConductorVehiculoApi {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/list")
-    public Response getAll() throws ListEmptyException, Exception {
+    public Response getAll() throws ExcesiveChargeException, Exception {
         HashMap<String, Object> res = new HashMap<>();
         ConductorVehiculoServices ps = new ConductorVehiculoServices();
         try {
             res.put("status", "success");
             res.put("message", "Consulta realizada con exito.");
-            res.put("data", ps.listShowAll());
+            res.put("data", ps.listShowAll(ps.listAll()));
             return Response.ok(res).build();
         } catch (Exception e) {
             res.put("status", "error");
@@ -61,7 +61,7 @@ public class ConductorVehiculoApi {
                 return Response.status(Status.NOT_FOUND).entity(map).build();
             }
             map.put("msg", "OK");
-            map.put("data", ps.getConductorVehiculo());
+            map.put("data", ps.showOne(id));
             return Response.ok(map).build();
         } catch (Exception e) {
             map.put("msg", "Error al obtener el pedido");
@@ -263,7 +263,7 @@ public class ConductorVehiculoApi {
 
             if (results != null && !results.isEmpty()) {
                 map.put("msg", "OK");
-                map.put("data", results.toArray());
+                map.put("data", ps.listShowAll(results));
                 return Response.ok(map).build();
             } else {
                 map.put("msg", "No se encontraron ordenes de entrega con los valores proporcionados");

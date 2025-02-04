@@ -1,0 +1,170 @@
+{% extends "blank_base.html" %}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{{ itinerario.id }}</h6>
+    </div>
+    <div class="card-body">
+        
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Mostrar mensajes flash si existen -->
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="alert alert-info">
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                
+                <p><strong>Estado:</strong> {{ itinerario.estado }}</p>
+                <p><strong>Fecha Programada:</strong> {{ itinerario.fechaProgramada }}</p>
+                <p><strong>Fecha Generacion:</strong> {{ itinerario.fechaGeneracion }}</p>
+                <p><strong>Conductor:</strong>
+                    {% if itinerario.conductorVehiculo and itinerario.conductorVehiculo.conductor %}
+                        {{ itinerario.conductorVehiculo.conductor.nombre }} {{ itinerario.conductorVehiculo.conductor.apellido }}
+                    {% else %}
+                        Información no disponible
+                    {% endif %}
+                </p>
+                <p><strong>Vehiculo:</strong>
+                    {% if itinerario.conductorVehiculo and itinerario.conductorVehiculo.vehiculo %}
+                        {{ itinerario.conductorVehiculo.vehiculo.marca }} {{ itinerario.conductorVehiculo.vehiculo.modelo }} {{ itinerario.conductorVehiculo.vehiculo.placa }}
+                    {% else %}
+                        Información no disponible
+                    {% endif %}
+                </p>
+            </div>
+            <div class="col-md-6">                   
+                <a href="{{ url_for('itinerario.edit', id=itinerario.id) }}" class="btn btn-primary">Editar</a>
+                <a href="{{ url_for('itinerario.delete', id=itinerario.id) }}" class="btn btn-danger">Eliminar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Detalles</h1>
+    
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Órdenes de entrega</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Estado</th>
+                            <th>Fecha Programada</th>
+                            <th>Fecha de Registro</th>
+                            <th>Código Único</th>
+                            <th>Requiere Frio</th>
+                            <th>Contenido</th>
+                            <th>Volumen Total</th>
+                            <th>Peso Total</th>
+                            <th>Cliente</th>
+                            <th>Telefono</th>
+                            <th>Email</th>
+                            <th>Punto de Entrega</th>
+                            <th>Dirección</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>ID</th>
+                            <th>Estado</th>
+                            <th>Fecha Programada</th>
+                            <th>Fecha de Registro</th>
+                            <th>Código Único</th>
+                            <th>Requiere Frio</th>
+                            <th>Contenido</th>
+                            <th>Volumen Total</th>
+                            <th>Peso Total</th>
+                            <th>Cliente</th>
+                            <th>Telefono</th>
+                            <th>Email</th>
+                            <th>Punto de Entrega</th>
+                            <th>Dirección</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% if itinerario.detallesEntrega and itinerario.detallesEntrega | length > 0 %}
+                            {% for detalle in itinerario.detallesEntrega %}
+                                <tr>
+                                    <td>{{ detalle.id }}</td>
+                                    <td>{{ detalle.estado }}</td>
+                                    <td>{{ detalle.fechaProgramada }}</td>
+                                    <td>{{ detalle.pedido.fechaRegistro }}</td>
+                                    <td>{{ detalle.pedido.codigoUnico }}</td>
+                                    <td>{{ detalle.pedido.requiereFrio }}</td>
+                                    <td>{{ detalle.pedido.contenido }}</td>
+                                    <td>{{ detalle.pedido.volumenTotal }}</td>
+                                    <td>{{ detalle.pedido.pesoTotal }}</td>
+                                    <td>
+                                        {% if detalle.cliente %}
+                                            {{ detalle.cliente.razonSocial }}
+                                        {% else %}
+                                            Información no disponible
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if detalle.cliente %}
+                                            {{ detalle.cliente.telefono }}
+                                        {% else %}
+                                            Información no disponible
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if detalle.cliente %}
+                                            {{ detalle.cliente.email }}
+                                        {% else %}
+                                            Información no disponible
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if detalle.puntoEntrega %}
+                                            {{ detalle.puntoEntrega.num }}
+                                        {% else %}
+                                            Información no disponible
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if detalle.puntoEntrega %}
+                                            {{ detalle.puntoEntrega.callePrincipal }}
+                                        {% else %}
+                                            Información no disponible
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="1">
+                                    <button id="generarOrdenesBtn" class="btn btn-primary" onclick="generarOrdenes({{ itinerario.id }})">Generar órdenes</button>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Formulario oculto para enviar el id -->
+<form id="generarOrdenesForm" action="{{ url_for('itinerario.generar_ordenes') }}" method="POST" style="display: none;">
+    <input type="hidden" name="id" id="itinerarioIdInput">
+</form>
+
+<script>
+    function generarOrdenes(itinerarioId) {
+        document.getElementById('itinerarioIdInput').value = itinerarioId;
+        document.getElementById('generarOrdenesForm').submit();
+    }
+</script>
+{% endblock content %}

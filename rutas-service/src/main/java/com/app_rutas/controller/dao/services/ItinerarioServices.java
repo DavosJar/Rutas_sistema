@@ -12,6 +12,7 @@ import com.app_rutas.models.Pedido;
 import com.app_rutas.models.Vehiculo;
 import com.app_rutas.models.enums.ItinerarioEstadoEnum;
 import com.app_rutas.controller.tda.list.LinkedList;
+import com.app_rutas.controller.tda.stack.Stack;
 
 public class ItinerarioServices {
     private ItinerarioDao obj;
@@ -42,9 +43,15 @@ public class ItinerarioServices {
             OrdenEntregaServices oes = new OrdenEntregaServices();
             ArrayList<OrdenEntrega> lista = i.getDetallesEntrega();
             LinkedList<Object> litaHash = new LinkedList<>();
-            for (OrdenEntrega oe : lista) {
-                litaHash.add(oes.showOne(oe.getId()));
+
+            if (lista != null && !lista.isEmpty()) {
+                for (OrdenEntrega oe : lista) {
+                    litaHash.add(oes.showOne(oe.getId()));
+                }
+            } else {
+                litaHash = new LinkedList<>();
             }
+
             HashMap<String, Object> mapa = new HashMap<>();
             mapa.put("id", i.getId());
             mapa.put("detallesEntrega", litaHash.toArray());
@@ -52,10 +59,10 @@ public class ItinerarioServices {
             mapa.put("fechaProgramada", i.getFechaProgramada());
             mapa.put("estado", i.getEstado());
             mapa.put("conductorVehiculo", new ConductorVehiculoServices().showOne(i.getIdConductorVehiculo()));
-            System.out.println("Hola mampa" + mapa);
+            System.out.println("Hola mapa" + mapa);
             return mapa;
         } catch (Exception e) {
-            throw new RuntimeException("Error al buscar el itinerario");
+            throw new RuntimeException("Error al buscar el itinerario", e);
         }
     }
 
@@ -149,39 +156,42 @@ public class ItinerarioServices {
         }
 
         PedidoServices ps = new PedidoServices();
-        Pedido[] pedidos = ps.listAll().toArray();
-        LinkedList<OrdenEntrega> ordenesEntrega = new LinkedList<>();
-        OrdenEntregaServices oes = new OrdenEntregaServices();
+        LinkedList<Pedido> listaPedidos = ps.order("id", 0);
+        if (listaPedidos == null || listaPedidos.isEmpty()) {
+            throw new ResourceNotFoundException("No hay pedidos por atender");
+        }
+        Pedido[] pedidos = listaPedidos.toArray();
 
+        Stack<OrdenEntrega> pilaOrdenes = new Stack<>(pedidos.length);
+        OrdenEntregaServices oes = new OrdenEntregaServices();
         Double volumenOcupado = 0.0;
         Double pesoOcupado = 0.0;
         Double capacidadMaxima = vehiculo.getCapacidad();
         Double pesoMaximo = vehiculo.getPesoMaximo();
-
         boolean esRefrigerado = vehiculo.getRefrigerado() != null && vehiculo.getRefrigerado();
 
         for (Pedido pedido : pedidos) {
+            // Solo procesamos pedidos no atendidos
+            if (pedido.getIsAttended()) {
+                continue; // Si el pedido ya está atendido, lo omitimos
+            }
+
             Double volumenPedido = pedido.getVolumenTotal();
             Double pesoPedido = pedido.getPesoTotal();
             boolean requiereFrio = pedido.getRequiereFrio();
 
-            // Verifica que haya suficiente capacidad y peso disponible
-            if (isFull(capacidadMaxima, volumenOcupado + volumenPedido) ||
-                    isFull(pesoMaximo, pesoOcupado + pesoPedido)) {
+            if (isFull(capacidadMaxima, volumenOcupado + volumenPedido)
+                    || isFull(pesoMaximo, pesoOcupado + pesoPedido)) {
                 continue;
             }
 
-            // Valida compatibilidad con refrigeración
             if ((requiereFrio && !esRefrigerado) || (!requiereFrio && esRefrigerado)) {
                 continue;
             }
 
             OrdenEntrega ordenEntrega = oes.generarOrdenEntrega(pedido, id);
             if (ordenEntrega != null) {
-                ordenesEntrega.add(ordenEntrega);
-                oes.save();
-
-                // Actualiza los valores ocupados
+                pilaOrdenes.push(ordenEntrega);
                 volumenOcupado += volumenPedido;
                 pesoOcupado += pesoPedido;
 
@@ -190,11 +200,16 @@ public class ItinerarioServices {
             }
         }
 
+        LinkedList<OrdenEntrega> ordenesEntrega = new LinkedList<>();
+        while (pilaOrdenes.getSize() > 0) {
+            ordenesEntrega.add(pilaOrdenes.pop());
+        }
+
         return ordenesEntrega;
     }
 
     private Boolean isFull(Double max, Double toAdd) {
-        return toAdd > max * 0.95; // Ahora devuelve true solo cuando realmente está lleno
+        return toAdd > max * 0.95;
     }
 
     public Boolean cancelarOrden(Integer idOrden) throws Exception {

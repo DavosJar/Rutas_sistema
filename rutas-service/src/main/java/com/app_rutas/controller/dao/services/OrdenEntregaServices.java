@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.app_rutas.controller.dao.OrdenEntregaDao;
 import com.app_rutas.controller.excepcion.ResourceNotFoundException;
+import com.app_rutas.models.Cliente;
 import com.app_rutas.models.Itinerario;
 import com.app_rutas.models.OrdenEntrega;
 import com.app_rutas.models.Pedido;
@@ -17,15 +18,19 @@ public class OrdenEntregaServices {
     public Object[] listShowAll() throws Exception {
         if (!obj.getListAll().isEmpty()) {
             OrdenEntrega[] lista = (OrdenEntrega[]) obj.getListAll().toArray();
+
             Object[] respuesta = new Object[lista.length];
             for (int i = 0; i < lista.length; i++) {
                 Pedido p = new PedidoServices().get(lista[i].getIdPedido());
+                PuntoEntrega pe = new PuntoEntregaServices().get(p.getIdPuntoEntrega());
+                Cliente c = new ClienteServices().get(p.getIdCliente());
                 HashMap<String, Object> mapa = new HashMap<>();
                 mapa.put("id", lista[i].getId());
                 mapa.put("fechaProgramada", lista[i].getFechaProgramada());
-                mapa.put("observaciones", lista[i].getObservaciones());
                 mapa.put("estado", lista[i].getEstado());
                 mapa.put("pedido", p);
+                mapa.put("puntoEntrega", pe);
+                mapa.put("cliente", c);
                 respuesta[i] = mapa;
             }
             return respuesta;
@@ -37,12 +42,17 @@ public class OrdenEntregaServices {
         try {
             OrdenEntrega oe = obj.getById(id);
             Pedido p = new PedidoServices().get(oe.getIdPedido());
+            Cliente c = new ClienteServices().get(p.getIdCliente());
+            PuntoEntrega pe = new PuntoEntregaServices().get(p.getIdPuntoEntrega());
             System.out.println(p);
             HashMap<String, Object> mapa = new HashMap<>();
             mapa.put("id", oe.getId());
-            mapa.put("fechaProgranada", oe.getFechaProgramada());
+            mapa.put("fechaProgramada", oe.getFechaProgramada());
             mapa.put("estado", oe.getEstado());
             mapa.put("pedido", p);
+            mapa.put("cliente", c);
+            mapa.put("puntoEntrega", pe);
+
             return mapa;
         } catch (Exception e) {
             throw new RuntimeException("Error al buscar La orden de entrega");
@@ -146,6 +156,7 @@ public class OrdenEntregaServices {
         obj.getOrdenEntrega().setIdItinerario(idItinerario);
         obj.getOrdenEntrega().setFechaProgramada(itinerario.getFechaProgramada());
         obj.getOrdenEntrega().setEstado(EstadoEnum.PENDIENTE);
+        obj.save();
 
         return obj.getOrdenEntrega();
     }

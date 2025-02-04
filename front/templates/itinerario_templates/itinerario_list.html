@@ -1,0 +1,96 @@
+{% extends "table_base.html" %}
+{% block title %}itinerario{% endblock title %}
+{% block table %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{% block table_title %}Itinerarios{% endblock table_title %}</h6>
+        <a href="{{ url_for('itinerario.save_form') }}" class="btn btn-primary btn-sm float-right">Crear Itinerario</a>
+    </div>
+    <div class="card-body">
+        {% if message %}
+        <div class="alert alert-info">
+            {{ message }}
+        </div>
+        {% endif %}
+        <div class="table-responsive">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <div class="dataTables_length" id="dataTable_length">
+                        <label>Show
+                            <select name="dataTable_length" aria-controls="dataTable"
+                            class="custom-select custom-select-sm form-control form-control-sm">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <div id="dataTable_filter" class="dataTables_filter">
+                        <label>Search:
+                            <input type="search" class="form-control form-control-sm" placeholder="" aria-controls="dataTable">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Estado</th>
+                        <th>Conductor</th>
+                        <th>Vehiculo</th>
+                        <th>Fecha de Registro</th>
+                        <th>Fecha Programada</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Estado</th>
+                        <th>Conductor</th>
+                        <th>Vehiculo</th>
+                        <th>Fecha de Registro</th>
+                        <th>Fecha Programada</th>
+                        <th>Acciones</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% if itinerarios %}
+                    {% for itinerario in itinerarios %}
+                    <tr>
+                        <td>{{ itinerario.estado }}</td>
+                        <td>
+                            {% if itinerario.conductorVehiculo.conductor is defined %}
+                            {{ itinerario.conductorVehiculo.conductor.nombre }} {{ itinerario.conductorVehiculo.conductor.apellido }}
+                            {% else %}
+                            Sin conductor asignado
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if itinerario.conductorVehiculo.vehiculo is defined %}
+                            {{ itinerario.conductorVehiculo.vehiculo.marca }} {{ itinerario.conductorVehiculo.vehiculo.modelo }} ||
+                            {{ itinerario.conductorVehiculo.vehiculo.placa }}
+                            {% else %}
+                            Sin vehiculo asignado
+                            {% endif %}
+                        </td>
+                        <td>{{ itinerario.fechaGeneracion }}</td>
+                        <td>{{ itinerario.fechaProgramada }}</td>
+                        <td>
+                            <a href="{{ url_for('itinerario.itinerario_detail', id=itinerario.id) }}" class="btn btn-info btn-sm">Ver Detalles</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6">No hay puntos de entrega registradas</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock table %}

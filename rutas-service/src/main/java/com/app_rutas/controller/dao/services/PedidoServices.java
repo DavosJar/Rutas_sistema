@@ -21,7 +21,6 @@ public class PedidoServices {
                 PuntoEntrega pe = new PuntoEntregaServices().get(lista[i].getIdPuntoEntrega());
                 Cliente c = new ClienteServices().get(lista[i].getIdCliente());
                 HashMap<String, Object> mapa = new HashMap<>();
-                mapa.put("id", lista[i].getId());
                 mapa.put("fechaRegistro", lista[i].getFechaRegistro());
                 mapa.put("codigoUnico", lista[i].getCodigoUnico());
                 mapa.put("pesoTotal", lista[i].getPesoTotal());
@@ -41,9 +40,8 @@ public class PedidoServices {
     public Object showOne(Integer id) {
         try {
             Pedido p = obj.getById(id);
-            PuntoEntrega pe = new PuntoEntregaServices().get(p.getIdPuntoEntrega());
-            System.out.println(p.getCodigoUnico());
-            Cliente c = new ClienteServices().get(p.getIdCliente());
+            Object pe = new PuntoEntregaServices().get(p.getIdPuntoEntrega());
+            Object c = new ClienteServices().get(p.getIdCliente());
             HashMap<String, Object> mapa = new HashMap<>();
             mapa.put("fechaRegistro", p.getFechaRegistro());
             mapa.put("codigoUnico", p.getCodigoUnico());
@@ -151,6 +149,12 @@ public class PedidoServices {
     public void matchAttende(Integer id) throws Exception {
         this.obj.setPedido(getById(id));
         this.obj.getPedido().setIsAttended(true);
+        this.obj.update();
+    }
+
+    public void matchUnAttende(Integer id) throws Exception {
+        this.obj.setPedido(getById(id));
+        this.obj.getPedido().setIsAttended(false);
         this.obj.update();
     }
 }

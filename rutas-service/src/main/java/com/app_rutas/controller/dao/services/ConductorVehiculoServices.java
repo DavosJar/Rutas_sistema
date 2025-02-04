@@ -11,13 +11,13 @@ import com.app_rutas.controller.tda.list.LinkedList;
 public class ConductorVehiculoServices {
     private ConductorVehiculoDao obj;
 
-    public Object[] listShowAll() throws Exception {
+    public Object[] listShowAll(LinkedList<ConductorVehiculo> encontrados) throws Exception {
         if (!obj.getListAll().isEmpty()) {
-            ConductorVehiculo[] lista = (ConductorVehiculo[]) obj.getListAll().toArray();
+            ConductorVehiculo[] lista = encontrados.toArray();
             Object[] respuesta = new Object[lista.length];
             for (int i = 0; i < lista.length; i++) {
-                Vehiculo v = new VehiculoServices().get(lista[i].getIdVehiculo());
-                Conductor c = new ConductorServices().getConductorById(lista[i].getIdConductor());
+                Vehiculo v = new VehiculoServices().getById(lista[i].getIdVehiculo());
+                Conductor c = new ConductorServices().get(lista[i].getIdConductor());
                 HashMap<String, Object> mapa = new HashMap<>();
                 mapa.put("id", lista[i].getId());
                 mapa.put("fechaAsignacion", lista[i].getFechaAsignacion());

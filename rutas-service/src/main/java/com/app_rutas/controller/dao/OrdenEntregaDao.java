@@ -7,7 +7,6 @@ import com.app_rutas.models.OrdenEntrega;
 import com.app_rutas.models.enums.EstadoEnum;
 import com.google.gson.Gson;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @SuppressWarnings({ "unchecked", "ConvertToTryWithResources" })
@@ -90,44 +89,53 @@ public class OrdenEntregaDao extends AdapterDao<OrdenEntrega> {
         }
     }
 
-    private LinkedList<OrdenEntrega> sequentialSearch(String attribute, Object value) throws Exception {
-        LinkedList<OrdenEntrega> lista = this.listAll();
-        OrdenEntrega[] aux = lista.toArray();
-
+    private LinkedList<OrdenEntrega> linearBinarySearch(String attribute, Object value) throws Exception {
+        LinkedList<OrdenEntrega> lista = this.listAll().quickSort(attribute, 1);
         LinkedList<OrdenEntrega> ordenes = new LinkedList<>();
+        if (!lista.isEmpty()) {
+            OrdenEntrega[] aux = lista.toArray();
+            Integer low = 0;
+            Integer high = aux.length - 1;
+            Integer mid;
+            Integer index = -1;
+            String searchValue = value.toString().toLowerCase();
+            while (low <= high) {
+                mid = (low + high) / 2;
 
-        if (aux.length > 0) {
-            boolean esNumerico = value instanceof Number;
+                String midValue = obtenerAttributeValue(aux[mid], attribute).toString().toLowerCase();
+                // System.out.println("Comparando: " + midValue + " con " + searchValue);
 
-            for (OrdenEntrega ordenEntrega : aux) {
-                Object attributeValue = obtenerAttributeValue(ordenEntrega, attribute);
-
-                if (attributeValue == null) {
-                    continue;
-                }
-
-                int comparacion;
-                if (esNumerico) {
-                    Number attributeNumberValue = (Number) attributeValue;
-                    Number searchValue = (Number) value;
-                    comparacion = Double.compare(attributeNumberValue.doubleValue(), searchValue.doubleValue());
+                if (midValue.startsWith(searchValue)) {
+                    if (mid == 0 || !obtenerAttributeValue(aux[mid - 1], attribute).toString().toLowerCase()
+                            .startsWith(searchValue)) {
+                        index = mid;
+                        break;
+                    } else {
+                        high = mid - 1;
+                    }
+                } else if (midValue.compareToIgnoreCase(searchValue) < 0) {
+                    low = mid + 1;
                 } else {
-                    String attributeStringValue = attributeValue.toString().toLowerCase();
-                    String searchStringValue = value.toString().toLowerCase();
-                    comparacion = attributeStringValue.compareTo(searchStringValue);
-                }
-
-                if (comparacion == 0) {
-                    ordenes.add(ordenEntrega);
+                    high = mid - 1;
                 }
             }
-        }
 
+            if (index.equals(-1)) {
+                return ordenes;
+            }
+
+            Integer i = index;
+            while (i < aux.length
+                    && obtenerAttributeValue(aux[i], attribute).toString().toLowerCase().startsWith(searchValue)) {
+                ordenes.add(aux[i]);
+                i++;
+            }
+        }
         return ordenes;
     }
 
     public LinkedList<OrdenEntrega> buscar(String attribute, Object value) throws Exception {
-        return sequentialSearch(attribute, value);
+        return linearBinarySearch(attribute, value);
     }
 
     public OrdenEntrega buscarPor(String attribute, Object value) throws Exception {
@@ -165,21 +173,18 @@ public class OrdenEntregaDao extends AdapterDao<OrdenEntrega> {
         return index;
     }
 
-    private Object obtenerAttributeValue(Object object, String attribute)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        String normalizedAttribute = "get" + attribute.substring(0, 1).toUpperCase() + attribute.substring(1);
-
+    private Object obtenerAttributeValue(Object object, String attribute) throws Exception {
+        String normalizedAttribute = "get" + attribute.substring(0, 1).toUpperCase()
+                + attribute.substring(1).toLowerCase();
         Method[] methods = object.getClass().getMethods();
 
         for (Method method : methods) {
-            if (method.getName().equals(normalizedAttribute) && method.getParameterCount() == 0) {
-                Object value = method.invoke(object);
-
-                return value;
+            if (method.getName().equalsIgnoreCase(normalizedAttribute) && method.getParameterCount() == 0) {
+                return method.invoke(object);
             }
         }
 
-        throw new NoSuchMethodException("No se encontró el método getter para el atributo: " + attribute);
+        throw new NoSuchMethodException("No se encontor el atributo: " + attribute);
     }
 
     public String[] getOrdenAttributeLists() {

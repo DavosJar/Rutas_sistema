@@ -16,7 +16,7 @@ import com.app_rutas.controller.dao.services.ClienteServices;
 
 import com.app_rutas.controller.dao.services.PedidoServices;
 import com.app_rutas.controller.dao.services.PuntoEntregaServices;
-import com.app_rutas.controller.excepcion.ListEmptyException;
+import com.app_rutas.controller.excepcion.ExcesiveChargeException;
 
 @Path("/pedido")
 public class PedidoApi {
@@ -24,7 +24,7 @@ public class PedidoApi {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/list")
-    public Response getAll() throws ListEmptyException, Exception {
+    public Response getAll() throws ExcesiveChargeException, Exception {
         HashMap<String, Object> res = new HashMap<>();
         PedidoServices ps = new PedidoServices();
         try {
