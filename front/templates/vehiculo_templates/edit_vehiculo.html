@@ -1,0 +1,79 @@
+{% extends "blank_base.html" %}
+{% block title %}
+Editar Vehículo
+{% endblock title%}
+{% block content %}
+
+<div class="d-flex justify-content-center">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Editar Vehículo</h6>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('vehiculo.update', id=vehiculo.id) }}" method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="marca">Marca</label>
+                                <input type="text" class="form-control" id="marca" name="marca" value="{{ vehiculo.marca }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="modelo">Modelo</label>
+                                <input type="text" class="form-control" id="modelo" name="modelo" value="{{ vehiculo.modelo }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="placa">Placa</label>
+                                <input type="text" class="form-control" id="placa" name="placa" value="{{ vehiculo.placa }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="capacidad">Capacidad</label>
+                                <input type="text" class="form-control" id="capacidad" name="capacidad" value="{{ vehiculo.capacidad }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="potencia">Potencia</label>
+                                <input type="text" class="form-control" id="potencia" name="potencia" value="{{ vehiculo.potencia }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pesoTara">Peso Tara</label>
+                                <input type="text" class="form-control" id="pesoTara" name="pesoTara" value="{{ vehiculo.pesoTara }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pesoMaximo">Peso Máximo</label>
+                                <input type="text" class="form-control" id="pesoMaximo" name="pesoMaximo" value="{{ vehiculo.pesoMaximo }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="refrigerado">Refrigeración</label>
+                                <select class="form-control" id="refrigerado" name="refrigerado" required>
+                                    <option value="true" {% if vehiculo.refrigerado %}selected{% endif %}>Sí</option>
+                                    <option value="false" {% if not vehiculo.refrigerado %}selected{% endif %}>No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="estado">Estado</label>
+                                <select id="estado" name="estado" class="form-control" required>
+                                    {% if estados %}
+                                        {% for key, value in estados %}
+                                            <option value="{{ key }}" {% if vehiculo.estado == key %}selected{% endif %}>
+                                                {{ value }}
+                                            </option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option value="" disabled>No disponible</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12 text-center">
+                            <button type="submit" class="btn btn-primary">Actualizar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
