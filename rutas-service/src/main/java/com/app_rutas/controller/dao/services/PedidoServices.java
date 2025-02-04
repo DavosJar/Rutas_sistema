@@ -41,10 +41,10 @@ public class PedidoServices {
     public Object showOne(Integer id) {
         try {
             Pedido p = obj.getById(id);
-            PuntoEntrega pe = new PuntoEntregaServices().get(p.getIdPuntoEntrega());
-            System.out.println(p.getCodigoUnico());
-            Cliente c = new ClienteServices().get(p.getIdCliente());
+            Object pe = new PuntoEntregaServices().get(p.getIdPuntoEntrega());
+            Object c = new ClienteServices().get(p.getIdCliente());
             HashMap<String, Object> mapa = new HashMap<>();
+            mapa.put("id",p.getId());
             mapa.put("fechaRegistro", p.getFechaRegistro());
             mapa.put("codigoUnico", p.getCodigoUnico());
             mapa.put("pesoTotal", p.getPesoTotal());
