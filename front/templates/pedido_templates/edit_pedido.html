@@ -1,0 +1,66 @@
+{% extends "blank_base.html" %}
+{% block title %}
+Editar Pedido
+{% endblock title %}
+{% block content %}
+
+<div class="container py-5">
+    <h2 class="mb-4">Editar Pedido</h2>
+    <div class="card shadow-sm p-4">
+        <form action="{{ url_for('pedido.update', id=pedido.id) }}" method="POST">
+            <!-- Campo oculto con el ID -->
+            <input type="hidden" name="id" value="{{ pedido.id }}">
+
+            <!-- Campos del formulario -->
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="contenido">Contenido</label>
+                    <input type="text" class="form-control" id="contenido" name="contenido" 
+                           value="{{ pedido.contenido }}" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="registro">Fecha de registro</label>
+                    <input type="date" class="form-control" id="registro" name="registro" 
+                           value="{{ pedido.fechaRegistro }}" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="refrigeracion">Requiere refrigeración</label>
+                    <select id="refrigeracion" name="refrigeracion" class="form-control" required>
+                        <option value="true" {% if pedido.requiereFrio %}selected{% endif %}>Sí</option>
+                        <option value="false" {% if not pedido.requiereFrio %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="peso">Peso Total (kg)</label>
+                    <input type="number" class="form-control" id="peso" name="peso" 
+                           value="{{ pedido.pesoTotal }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="volumen">Volumen Total (m³)</label>
+                    <input type="number" class="form-control" id="volumen" name="volumen" 
+                           value="{{ pedido.volumen }}" >
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="estado">Estado</label>
+                    <select id="estado" name="estado" class="form-control" required>
+                        {% for key, value in estado %}
+                            <option value="{{ key }}" {% if pedido.estado == key %}selected{% endif %}>
+                                {{ value }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary w-50">Actualizar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}
