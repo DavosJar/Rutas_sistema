@@ -1,0 +1,33 @@
+{% extends "blank_base.html" %}
+{% block title %}Detalle del Trabajador{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Detalle del Trabajador</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nombre:</strong> {{ trabajador.nombre }}</p>
+                    <p><strong>Apellido:</strong> {{ trabajador.apellido }}</p>
+                    <p><strong>Tipo de Identificación:</strong> {{ trabajador.tipoIdentificacion }}</p>
+                    <p><strong>Identificación:</strong> {{ trabajador.identificacion }}</p>
+                    <p><strong>Fecha de Nacimiento:</strong> {{ trabajador.fechaNacimiento }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Dirección:</strong> {{ trabajador.direccion }}</p>
+                    <p><strong>Teléfono:</strong> {{ trabajador.telefono }}</p>
+                    <p><strong>Email:</strong> {{ trabajador.email }}</p>
+                    <p><strong>Sexo:</strong> {{ trabajador.sexo }}</p>
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('trabajador.edit', id=trabajador.id) }}" class="btn btn-primary">Editar Trabajador</a>
+                        <a href="{{ url_for('trabajador.delete', id=trabajador.id) }}" class="btn btn-danger">Eliminar Trabajador</a>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+</div>
+{% endblock content %}
